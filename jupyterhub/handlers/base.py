@@ -291,6 +291,7 @@ class BaseHandler(RequestHandler):
         """
         refresh_age = self.authenticator.auth_refresh_age
         if not refresh_age:
+            self.log.debug('authenticator class has no auth_refresh_age')
             return user
         now = time.monotonic()
         if (
