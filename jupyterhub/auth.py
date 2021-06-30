@@ -570,8 +570,31 @@ class Authenticator(LoggingConfigurable):
                 await handler.proxy.delete_user(user, server_name = '')
                 # await self.delete_user(user, server_name='')
                 handler.clear_login_cookie()
+                try:
+                    handler.clear_cookie(f"jupyterhub-user-{user.escaped_name}") # is this cookie necessary to clear?
+                except Exception as e:
+                    print('I guess that is not a cookie, or user.escaped_name doesnt return a clean user name')
+                    print(str(e))
                 handler.clear_cookie("jupyterhub-hub-login")
                 handler.clear_cookie("jupyterhub-session-id")
+                from IPython.display import display, Javascript
+                display(Javascript(
+                    """
+                    require(
+                        ["base/js/dialog"], 
+                        function(dialog) {
+                            dialog.modal({
+                                title: 'Hang on there, Scooter.',
+                                body: 'Your Github authentication credentials expired. Please sign in again.',
+                                buttons: {
+                                    'Thanks, Obama': {}
+                                }
+                            });
+                        }
+                    );
+                    """
+                ))
+                
                 # handler.redirect('/hub/logout/')
                 # handler.handle_logout()
                 # handler.spawn_single_user()
