@@ -562,7 +562,10 @@ class Authenticator(LoggingConfigurable):
             )
             try:
                 handler.clear_login_cookie()
-                handler.handle_logout()
+                handler.clear_cookie("jupyterhub-hub-login")
+                handler.clear_cookie("jupyterhub-session-id")
+                handler.redirect('/hub/logout')
+                # handler.handle_logout()
                 # handler.spawn_single_user()
             except:
                 pass
