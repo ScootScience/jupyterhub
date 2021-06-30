@@ -564,7 +564,11 @@ class Authenticator(LoggingConfigurable):
                 # await handler.stop_single_user(user, user.spawner.name)
                 print(user.server)
                 # await self.proxy.delete_user(user, server_name='')
-                await self.delete_user(user, server_name='')
+                for server_name in user.spawners:
+                    print('sever_name from user.spawners:')
+                    print(server_name)
+                await handler.proxy.delete_user(user, server_name = '')
+                # await self.delete_user(user, server_name='')
                 handler.clear_login_cookie()
                 handler.clear_cookie("jupyterhub-hub-login")
                 handler.clear_cookie("jupyterhub-session-id")
