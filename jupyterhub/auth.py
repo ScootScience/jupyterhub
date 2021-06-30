@@ -556,7 +556,7 @@ class Authenticator(LoggingConfigurable):
         self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}; age: {now - reauth._auth_refreshed if reauth._auth_refreshed else None}")
         # print(f"reauth._wait_up: {reauth._wait_up()}")
         print(f"reauth.active: {reauth.active}")
-        if (not reauth) or ((now - reauth._auth_refreshed) > auth_age if reauth._auth_refreshed else False) or (not reauth.active):
+        if (not reauth) or ((now - reauth._auth_refreshed) > auth_age if reauth._auth_refreshed else False):
             self.log.debug(
                 "oauth credentials expired or handler.refresh_auth(user, '') returned None; either way, should force re-authentication."
             )
