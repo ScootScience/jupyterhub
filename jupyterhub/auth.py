@@ -516,14 +516,14 @@ class Authenticator(LoggingConfigurable):
     
     async def refresh_user(self, user, handler=None):
         """Refresh auth data for a given user
-
+        
         Allows refreshing or invalidating auth data.
-
+        
         Only override if your authenticator needs
         to refresh its data about users once in a while.
-
+        
         .. versionadded: 1.0
-
+        
         Args:
             user (User): the user to refresh
             handler (tornado.web.RequestHandler or None): the current request handler
@@ -531,10 +531,10 @@ class Authenticator(LoggingConfigurable):
             auth_data (bool or dict):
                 Return **True** if auth data for the user is up-to-date
                 and no updates are required.
-
+                
                 Return **False** if the user's auth data has expired,
                 and they should be required to login again.
-
+                
                 Return a **dict** of auth data if some values should be updated.
                 This dict should have the same structure as that returned
                 by :meth:`.authenticate()` when it returns a dict.
@@ -544,50 +544,18 @@ class Authenticator(LoggingConfigurable):
         """
         self.log.warning(f"Checking Oauth credentials - running refresh_user with user {user}")
         try:
-            # reauth = await handler.authenticate(self, '')
-            # try:
-            #     # self.get_argument("code")
-            #     print('A')
-            #     print(dir(self))
-            #     reauth = await self.get_authenticated_user(handler, '')
-            #     print(reauth)
-            # except Exception as ex:
-            #     traceback.print_exception(type(ex), ex, ex.__traceback__)
-            try:
-                print('B')
-                print(dir(handler))
-                # handler.get_argument("code")
-                try:
-                    print('checking user.authenticator.auth_refresh_age')
-                    auth_age = user.authenticator.auth_refresh_age
-                    print(f"auth_age: {auth_age}")
-                except Exception as ex:
-                    traceback.print_exception(type(ex), ex, ex.__traceback__)
-                reauth = await handler.refresh_auth(user, '')
-                print(reauth)
-            except Exception as ex:
-                traceback.print_exception(type(ex), ex, ex.__traceback__)
-            # try:
-            #     # user.get_argument("code")
-            #     print('C')
-            #     print(dir(user))
-            #     reauth = await user.refresh_auth(handler) # returns None
-            #     print(reauth)
-            # except Exception as ex:
-            #     traceback.print_exception(type(ex), ex, ex.__traceback__)
-            #     # reauth=None
-            print(reauth)
-            print('ok.')
-            print(dir(reauth))
-            print(f"reauth._auth_refreshed: {reauth._auth_refreshed}")
+            self.log.debug('checking user.authenticator.auth_refresh_age')
+            auth_age = user.authenticator.auth_refresh_age
+            self.log.debug(f"user.authenticator.auth_refresh_age = {auth_age}")
         except Exception as ex:
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
-            reauth=None
-        if not reauth:
+            traceback.self.log.debug_exception(type(ex), ex, ex.__traceback__)
+        reauth = await handler.refresh_auth(user, '')
+        self.log.debug(f"handler.refresh_auth(user, '') returned: {reauth}")
+        self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}")
+        if (not reauth) or (reauth._auth_refreshed > auth_ager):
             self.log.debug(
-                "handler.refresh_auth(user, '')"
+                "oauth credentials expired or handler.refresh_auth(user, '') returned None"
             )
-            print('auth seems to be expiiiirrreeeedd.')
             try:
                 handler.clear_login_cookie()
                 # handler.spawn_single_user()
@@ -599,12 +567,12 @@ class Authenticator(LoggingConfigurable):
             # handler.handle_logout()
             # handler.redirect('/hub/home')
             # return False
-            print('reauth object')
-            print(dir(reauth))
-            print('handler object')
-            print(dir(handler))
-            print('user object')
-            print(dir(user))
+            # print('reauth object')
+            # print(dir(reauth))
+            # print('handler object')
+            # print(dir(handler))
+            # print('user object')
+            # print(dir(user))
             # return reauth
             print('returning False')
             return False
