@@ -562,6 +562,7 @@ class Authenticator(LoggingConfigurable):
             )
             try:
                 handler.clear_login_cookie()
+                handler.handle_logout()
                 # handler.spawn_single_user()
             except:
                 pass
