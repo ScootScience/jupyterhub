@@ -552,50 +552,30 @@ class Authenticator(LoggingConfigurable):
         reauth = await handler.refresh_auth(user, '')
         self.log.debug(f"handler.refresh_auth(user, '') returned: {reauth}")
         self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}")
+        print(f"reauth._wait_up: {reauth._wait_up}")
+        print(f"reauth.active: {reauth.active}")
         if (not reauth) or (reauth._auth_refreshed > auth_age if reauth._auth_refreshed else False):
             self.log.debug(
-                "oauth credentials expired or handler.refresh_auth(user, '') returned None"
+                "oauth credentials expired or handler.refresh_auth(user, '') returned None; either way, should force re-authentication."
             )
             try:
                 handler.clear_login_cookie()
                 # handler.spawn_single_user()
             except:
                 pass
-            # await handler.stop_single_user(user, user.spawner.name)
+            # await handler.stop_single_user(user, user.spawner.name) # this stops kernels, which we don't want.
             # handler.clear_cookie("jupyterhub-hub-login")
             # handler.clear_cookie("jupyterhub-session-id")
             # handler.handle_logout()
             # handler.redirect('/hub/home')
-            # return False
-            # print('reauth object')
-            # print(dir(reauth))
-            # print('handler object')
-            # print(dir(handler))
-            # print('user object')
-            # print(dir(user))
-            # return reauth
-            print('returning False')
             return False
         else:
-            print('reauth is there, but didnt return from earlier for some reason.')
-            # reauth = await user.refresh_auth(handler)
             self.log.debug(
                 "handler.get_authenticated_user() succeeded when called from refresh_user(); returning result of get_authenticated_user()"
             )
             auth_state = await reauth.get_auth_state()
             print(f"auth_state: {auth_state}")
-            print(dir(auth_state))
-            # refresh_user_return = {
-            #         'name': auth_state['auth_state']['github_user']['login'],
-            #         'auth_state': {
-            #             'access_token': auth_state['auth_state']['access_token'],
-            #             # 'refresh_token': refresh_token,
-            #             'oauth_user': auth_state['auth_state'],
-            #             # 'scope': scope,
-            #         }
-            #     }
-            # print(f'returning {refresh_user_return}')
-            return True # reauth
+            return True
 
 
     def is_admin(self, handler, authentication):
