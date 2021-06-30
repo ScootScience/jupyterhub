@@ -561,11 +561,13 @@ class Authenticator(LoggingConfigurable):
                 "oauth credentials expired or handler.refresh_auth(user, '') returned None; either way, should force re-authentication."
             )
             try:
-                await handler.stop_single_user(user, user.spawner.name)
+                # await handler.stop_single_user(user, user.spawner.name)
+                print(user.server)
+                await self.proxy.delete_user(user, server_name='')
                 handler.clear_login_cookie()
                 handler.clear_cookie("jupyterhub-hub-login")
                 handler.clear_cookie("jupyterhub-session-id")
-                handler.redirect('/hub/logout/')
+                # handler.redirect('/hub/logout/')
                 # handler.handle_logout()
                 # handler.spawn_single_user()
             except:
