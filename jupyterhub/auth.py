@@ -554,17 +554,18 @@ class Authenticator(LoggingConfigurable):
         reauth = await handler.refresh_auth(user, '') # see refresh_auth documented here: https://github.com/jupyterhub/jupyterhub/blob/c00c3fa28703669b932eb84549654238ff8995dc/jupyterhub/handlers/base.py
         self.log.debug(f"handler.refresh_auth(user, '') returned: {reauth}")
         self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}; age: {now - reauth._auth_refreshed if reauth._auth_refreshed else None}")
-        print(f"reauth._wait_up: {reauth._wait_up}")
+        print(f"reauth._wait_up: {reauth._wait_up()}")
         print(f"reauth.active: {reauth.active}")
-        if (not reauth) or ((now - reauth._auth_refreshed) > auth_age if reauth._auth_refreshed else False):
+        if (not reauth) or ((now - reauth._auth_refreshed) > auth_age if reauth._auth_refreshed else False) or (not reauth.active):
             self.log.debug(
                 "oauth credentials expired or handler.refresh_auth(user, '') returned None; either way, should force re-authentication."
             )
             try:
+                await handler.stop_single_user(user, user.spawner.name)
                 handler.clear_login_cookie()
                 handler.clear_cookie("jupyterhub-hub-login")
                 handler.clear_cookie("jupyterhub-session-id")
-                handler.redirect('/hub/logout')
+                handler.redirect('/hub/logout/')
                 # handler.handle_logout()
                 # handler.spawn_single_user()
             except:
