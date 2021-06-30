@@ -552,7 +552,7 @@ class Authenticator(LoggingConfigurable):
         reauth = await handler.refresh_auth(user, '')
         self.log.debug(f"handler.refresh_auth(user, '') returned: {reauth}")
         self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}")
-        if (not reauth) or (reauth._auth_refreshed > auth_ager):
+        if (not reauth) or (reauth._auth_refreshed > auth_age):
             self.log.debug(
                 "oauth credentials expired or handler.refresh_auth(user, '') returned None"
             )
