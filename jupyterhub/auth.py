@@ -542,6 +542,7 @@ class Authenticator(LoggingConfigurable):
                 Any fields not present will be left unchanged.
                 This can include updating `.admin` or `.auth_state` fields.
         """
+        now = time.monotonic()
         self.log.warning(f"Checking Oauth credentials - running refresh_user with user {user}")
         try:
             self.log.debug('checking user.authenticator.auth_refresh_age')
@@ -551,10 +552,10 @@ class Authenticator(LoggingConfigurable):
             traceback.self.log.debug_exception(type(ex), ex, ex.__traceback__)
         reauth = await handler.refresh_auth(user, '')
         self.log.debug(f"handler.refresh_auth(user, '') returned: {reauth}")
-        self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}")
+        self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}; age: {now - reauth._auth_refreshed}")
         print(f"reauth._wait_up: {reauth._wait_up}")
         print(f"reauth.active: {reauth.active}")
-        if (not reauth) or (reauth._auth_refreshed > auth_age if reauth._auth_refreshed else False):
+        if (not reauth) or ((now - reauth._auth_refreshed) > auth_age if reauth._auth_refreshed else False):
             self.log.debug(
                 "oauth credentials expired or handler.refresh_auth(user, '') returned None; either way, should force re-authentication."
             )
