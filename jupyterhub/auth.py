@@ -577,6 +577,7 @@ class Authenticator(LoggingConfigurable):
                     print(str(e))
                 handler.clear_cookie("jupyterhub-hub-login")
                 handler.clear_cookie("jupyterhub-session-id")
+                handler.render_logout_page()
                 from IPython.display import display, Javascript
                 display(Javascript(
                     """
