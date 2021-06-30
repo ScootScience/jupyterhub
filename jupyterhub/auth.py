@@ -32,6 +32,7 @@ from .traitlets import Command
 # from jupyterhub.traitlets import Command
 import traceback
 from tornado import gen
+import time
 
 class Authenticator(LoggingConfigurable):
     """Base class for implementing an authentication provider for JupyterHub"""
@@ -550,7 +551,7 @@ class Authenticator(LoggingConfigurable):
             self.log.debug(f"user.authenticator.auth_refresh_age = {auth_age}")
         except Exception as ex:
             traceback.self.log.debug_exception(type(ex), ex, ex.__traceback__)
-        reauth = await handler.refresh_auth(user, '')
+        reauth = await handler.refresh_auth(user, '') # see refresh_auth documented here: https://github.com/jupyterhub/jupyterhub/blob/c00c3fa28703669b932eb84549654238ff8995dc/jupyterhub/handlers/base.py
         self.log.debug(f"handler.refresh_auth(user, '') returned: {reauth}")
         self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}; age: {now - reauth._auth_refreshed}")
         print(f"reauth._wait_up: {reauth._wait_up}")
