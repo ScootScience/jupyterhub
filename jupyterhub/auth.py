@@ -555,49 +555,32 @@ class Authenticator(LoggingConfigurable):
         self.log.debug(f"handler.refresh_auth(user, '') returned: {reauth}")
         self.log.debug(f"reauth._auth_refreshed: {reauth._auth_refreshed}; age: {now - reauth._auth_refreshed if reauth._auth_refreshed else None}")
         # print(f"reauth._wait_up: {reauth._wait_up()}")
-        print(f"reauth.active: {reauth.active}")
-        if False:
-            print('false')
+        self.log.debug(f"reauth.active: {reauth.active}")
+        if False: # this is a dummy statment b/c I am skipping this timeout auth invalidation for now.
+            self.log.debug('false')
+        # determine whether expiration has happened- if so, invalidate auth and remove user; else return True
         # if (not reauth) or ((now - reauth._auth_refreshed) > auth_age if reauth._auth_refreshed else False):
         #     self.log.debug(
         #         "oauth credentials expired or handler.refresh_auth(user, '') returned None; either way, should force re-authentication."
         #     )
-        #     try:
+        #     try: # various ways of stopping user pods, clearing cookies related to auth, etc.
         #         # await handler.stop_single_user(user, user.spawner.name)
-        #         print(user.server)
+        #         self.log.debug(user.server)
         #         # await self.proxy.delete_user(user, server_name='')
         #         for server_name in user.spawners:
-        #             print('sever_name from user.spawners:')
-        #             print(server_name)
+        #             self.log.debug('sever_name from user.spawners:')
+        #             self.log.debug(server_name)
         #         await handler.proxy.delete_user(user, server_name = '')
         #         # await self.delete_user(user, server_name='')
         #         handler.clear_login_cookie()
         #         try:
         #             handler.clear_cookie(f"jupyterhub-user-{user.escaped_name}") # is this cookie necessary to clear?
         #         except Exception as e:
-        #             print('I guess that is not a cookie, or user.escaped_name doesnt return a clean user name')
-        #             print(str(e))
+        #             self.log.debug('I guess that is not a cookie, or user.escaped_name doesnt return a clean user name')
+        #             self.log.debug(str(e))
         #         handler.clear_cookie("jupyterhub-hub-login")
         #         handler.clear_cookie("jupyterhub-session-id")
         #         # handler.render_logout_page()
-        #         # from IPython.display import display, Javascript
-        #         # display(Javascript(
-        #         #     """
-        #         #     require(
-        #         #         ["base/js/dialog"], 
-        #         #         function(dialog) {
-        #         #             dialog.modal({
-        #         #                 title: 'Hang on there, Scooter.',
-        #         #                 body: 'Your Github authentication credentials expired. Please sign in again.',
-        #         #                 buttons: {
-        #         #                     'Thanks, Obama': {}
-        #         #                 }
-        #         #             });
-        #         #         }
-        #         #     );
-        #         #     """
-        #         # ))
-                
         #         # handler.redirect('/hub/logout/')
         #         # handler.handle_logout()
         #         # handler.spawn_single_user()
@@ -614,7 +597,7 @@ class Authenticator(LoggingConfigurable):
                 "handler.get_authenticated_user() succeeded when called from refresh_user(); returning result of get_authenticated_user()"
             )
             auth_state = await reauth.get_auth_state()
-            print(f"auth_state: {auth_state}")
+            self.log.debug(f"auth_state: {auth_state}")
             return True
 
 
